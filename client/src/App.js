@@ -41,18 +41,32 @@ function App() {
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth * 0.8;
-    canvas.height = window.innerHeight * 0.8;
+    
+    // Set canvas size to match container
+    const resizeCanvas = () => {
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth - 40; // Account for padding
+      canvas.height = Math.min(800, window.innerHeight * 0.7); // 70vh with max height
+      
+      // Redraw everything after resize
+      if (ctx) {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = size;
+      }
+    };
 
-    // Set initial canvas properties
-    ctx.strokeStyle = color;
-    ctx.lineWidth = size;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }, []);
+    // Initial resize
+    resizeCanvas();
+
+    // Add resize listener
+    window.addEventListener('resize', resizeCanvas);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, [color, size]);
 
   // Socket connection and event handling
   useEffect(() => {

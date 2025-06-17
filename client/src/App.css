@@ -18,6 +18,33 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  position: relative;
+}
+
+.drawing-indicator {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 canvas {
@@ -47,16 +74,62 @@ label {
   color: #333;
 }
 
-input[type="color"] {
-  width: 50px;
-  height: 50px;
-  border: none;
-  border-radius: 5px;
+input[type="range"] {
+  width: 150px;
   cursor: pointer;
 }
 
-input[type="range"] {
-  width: 150px;
+.color-picker {
+  position: relative;
+}
+
+.color-preview {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 2px solid #ccc;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.color-preview:hover {
+  border-color: #666;
+}
+
+.color-palette {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 10px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  z-index: 1000;
+}
+
+.color-option {
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: transform 0.2s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.custom-color {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -73,4 +146,49 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+
+.username-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.username-prompt form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.username-prompt h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.username-prompt input {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+  font-size: 16px;
+}
+
+.cursor-label {
+  position: absolute;
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px white;
+  transform: translateX(-50%);
+  white-space: nowrap;
 } 

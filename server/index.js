@@ -24,6 +24,11 @@ const io = new Server(server, {
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 
+// Add catch-all route for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
+
 // Store connected users
 const connectedUsers = new Map();
 

@@ -41,21 +41,27 @@ function App() {
   // Initialize canvas
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
     
     // Set canvas size to match container
     const resizeCanvas = () => {
       const container = canvas.parentElement;
-      canvas.width = container.clientWidth - 40; // Account for padding
-      canvas.height = Math.min(800, window.innerHeight * 0.7); // 70vh with max height
+      if (!container) return;
       
-      // Redraw everything after resize
-      if (ctx) {
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = color;
-        ctx.lineWidth = size;
-      }
+      // Set canvas size
+      canvas.width = container.clientWidth;
+      canvas.height = Math.min(800, window.innerHeight * 0.7);
+      
+      // Set initial canvas properties
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = size;
+      
+      // Clear and redraw
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
     // Initial resize
@@ -242,14 +248,14 @@ function App() {
                 {currentDrawer} is drawing...
               </div>
             )}
-            <div className="w-full max-w-[800px]">
+            <div className="w-full">
               <canvas
                 ref={canvasRef}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
-                onMouseOut={stopDrawing}
-                className="w-full border-2 border-gray-200 rounded-2xl bg-white shadow-inner"
+                onMouseLeave={stopDrawing}
+                className="w-full border border-gray-200 rounded-lg"
               />
             </div>
             {Object.entries(cursors).map(([id, cursor]) => (

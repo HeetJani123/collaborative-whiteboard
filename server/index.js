@@ -19,17 +19,14 @@ const io = new Server(server, {
   transports: ['websocket'],
   pingTimeout: 60000,
   pingInterval: 25000
-  
 });
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-// Add catch-all route for client-side routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-// Store connected users
 const connectedUsers = new Map();
 
 io.on('connection', (socket) => {
@@ -40,13 +37,11 @@ io.on('connection', (socket) => {
     console.log(`User ${username} connected with ID: ${socket.id}`);
     console.log('Current connected users:', Array.from(connectedUsers.entries()));
     
-    // Broadcast updated user list to all clients
     io.emit('userList', Array.from(connectedUsers.entries()));
   });
 
   socket.on('draw', (data) => {
     console.log('Received draw event from', socket.id, 'with data:', data);
-    // Broadcast to all clients including sender
     io.emit('draw', {
       ...data,
       id: socket.id,
@@ -81,7 +76,6 @@ io.on('connection', (socket) => {
     connectedUsers.delete(socket.id);
     console.log('Current connected users:', Array.from(connectedUsers.entries()));
     
-    // Broadcast updated user list to all clients
     io.emit('userList', Array.from(connectedUsers.entries()));
   });
 });

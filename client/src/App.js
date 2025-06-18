@@ -13,16 +13,16 @@ const socket = io('http://localhost:3004', {
 
 // Predefined colors for the palette
 const COLORS = [
-  '#000000', // Black
-  '#FF0000', // Red
-  '#00FF00', // Green
-  '#0000FF', // Blue
-  '#FFFF00', // Yellow
-  '#FF00FF', // Magenta
-  '#00FFFF', // Cyan
-  '#FFA500', // Orange
-  '#800080', // Purple
-  '#008000', // Dark Green
+  '#000000',
+  '#FF0000',
+  '#00FF00',
+  '#0000FF',
+  '#FFFF00',
+  '#FF00FF',
+  '#00FFFF',
+  '#FFA500',
+  '#800080',
+  '#008000'
 ];
 
 function App() {
@@ -45,32 +45,27 @@ function App() {
     
     const ctx = canvas.getContext('2d');
     
-    // Set canvas size to match container
     const resizeCanvas = () => {
       const container = canvas.parentElement;
       if (!container) return;
       
-      // Set canvas size
       canvas.width = container.clientWidth;
       canvas.height = Math.min(800, window.innerHeight * 0.7);
       
-      // Set initial canvas properties
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = color;
-      ctx.lineWidth = size;
+      //ctx.strokeStyle = color;
+      //ctx.lineWidth = size;
+      setColor(ctx.strokeStyle)
+      setSize(ctx.lineWidth)
       
-      // Clear and redraw
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
-    // Initial resize
     resizeCanvas();
 
-    // Add resize listener
     window.addEventListener('resize', resizeCanvas);
 
-    // Cleanup
     return () => window.removeEventListener('resize', resizeCanvas);
   }, [color, size]);
 
@@ -107,7 +102,6 @@ function App() {
       ctx.lineTo(data.pos.x, data.pos.y);
       ctx.stroke();
 
-      // Update current drawer
       setCurrentDrawer(data.username);
     };
 
@@ -133,14 +127,12 @@ function App() {
       setCurrentDrawer(null);
     };
 
-    // Add event listeners
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('draw', handleDraw);
     socket.on('cursor', handleCursor);
     socket.on('clear', handleClear);
 
-    // Cleanup
     return () => {
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
@@ -152,17 +144,32 @@ function App() {
 
   const startDrawing = (e) => {
     if (!username || !isConnected) return;
-    const { offsetX, offsetY } = e.nativeEvent;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    
     setIsDrawing(true);
-    setLastPos({ x: offsetX, y: offsetY });
+    setLastPos({ x, y });
     setCurrentDrawer(username);
   };
 
   const draw = (e) => {
     if (!isDrawing || !username || !isConnected) return;
-    const { offsetX, offsetY } = e.nativeEvent;
     const canvas = canvasRef.current;
     if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
     
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
@@ -171,20 +178,19 @@ function App() {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.moveTo(lastPos.x, lastPos.y);
-    ctx.lineTo(offsetX, offsetY);
+    ctx.lineTo(x, y);
     ctx.stroke();
 
     const drawData = {
       lastPos,
-      pos: { x: offsetX, y: offsetY },
+      pos: { x, y },
       color,
       size,
       username
     };
-    console.log('Emitting draw event:', drawData);
     socket.emit('draw', drawData);
 
-    setLastPos({ x: offsetX, y: offsetY });
+    setLastPos({ x, y });
   };
 
   const stopDrawing = () => {
@@ -277,40 +283,40 @@ function App() {
         {/* Controls Area */}
         <div className="bg-white rounded-3xl shadow-2xl p-8">
           <div className="flex flex-col items-center gap-8">
-            <div className="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Size Control */}
-              <div className="flex flex-col items-center bg-gray-50 p-6 rounded-2xl">
-                <label className="text-xl font-semibold text-gray-700 mb-4">Brush Size</label>
-                <div className="w-full max-w-xs flex items-center gap-4">
+              <div className="flex flex-col items-center bg-gray-50 p-4 rounded-xl">
+                <label className="text-base font-semibold text-gray-700 mb-2">Brush Size</label>
+                <div className="w-full max-w-xs flex items-center gap-2">
                   <input 
                     type="range" 
                     min="1" 
                     max="50" 
                     value={size} 
                     onChange={(e) => setSize(Number(e.target.value))}
-                    className="flex-1 accent-blue-500 h-2 rounded-lg"
+                    className="flex-1 accent-blue-500 h-1.5 rounded-lg"
                   />
-                  <span className="text-gray-600 font-medium min-w-[50px] text-center bg-white px-3 py-1 rounded-lg shadow-sm">
+                  <span className="text-gray-600 font-medium min-w-[40px] text-center bg-white px-2 py-0.5 rounded-lg shadow-sm text-sm">
                     {size}px
                   </span>
                 </div>
               </div>
 
               {/* Color Control */}
-              <div className="flex flex-col items-center bg-gray-50 p-6 rounded-2xl">
-                <label className="text-xl font-semibold text-gray-700 mb-4">Brush Color</label>
-                <div className="flex items-center justify-center gap-4">
+              <div className="flex flex-col items-center bg-gray-50 p-4 rounded-xl">
+                <label className="text-base font-semibold text-gray-700 mb-2">Brush Color</label>
+                <div className="flex items-center justify-center gap-2">
                   <div 
-                    className="w-12 h-12 rounded-xl cursor-pointer border-2 border-gray-300 hover:border-gray-400 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                    className="w-8 h-8 rounded-lg cursor-pointer border-2 border-gray-300 hover:border-gray-400 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                     style={{ backgroundColor: color }}
                     onClick={() => setShowColorPalette(!showColorPalette)}
                   />
                   {showColorPalette && (
-                    <div className="absolute mt-2 bg-white p-6 rounded-2xl shadow-2xl grid grid-cols-5 gap-4 z-50 border border-gray-200">
+                    <div className="absolute mt-2 bg-white p-3 rounded-xl shadow-xl grid grid-cols-5 gap-2 z-50 border border-gray-200">
                       {COLORS.map((colorOption) => (
                         <div
                           key={colorOption}
-                          className="w-10 h-10 rounded-xl cursor-pointer border border-gray-300 hover:scale-110 transition-all shadow-sm hover:shadow-md"
+                          className="w-6 h-6 rounded-lg cursor-pointer border border-gray-300 hover:scale-110 transition-all shadow-sm hover:shadow-md"
                           style={{ backgroundColor: colorOption }}
                           onClick={() => {
                             setColor(colorOption);
@@ -322,7 +328,7 @@ function App() {
                         type="color"
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
-                        className="w-10 h-10 p-0 border-0 rounded-xl cursor-pointer"
+                        className="w-6 h-6 p-0 border-0 rounded-lg cursor-pointer"
                       />
                     </div>
                   )}

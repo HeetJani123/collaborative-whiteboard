@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 // Create socket connection with dynamic server URL
 const SERVER_URL =
   process.env.NODE_ENV === "production"
-    ? "https://curious-macaron-c3adb0.netlify.app/" // <-- Replace with your deployed backend URL (Render/Heroku/etc)
+    ? "https://collaborative-whiteboard-1.onrender.com/" // <-- Replace with your deployed backend URL (Render/Heroku/etc)
     : "http://localhost:3004"; // <-- Your local backend port
 const socket = io(SERVER_URL, {
   transports: ['websocket'],

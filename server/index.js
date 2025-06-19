@@ -5,15 +5,38 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
+
+// Dynamic CORS origin for production
+const allowedOrigins = [
+  'http://localhost:3003',
+  'https://your-netlify-app.netlify.app', // Replace with your actual Netlify URL
+  process.env.CLIENT_URL // Environment variable for production
+].filter(Boolean);
+
 app.use(cors({
-  origin: 'http://localhost:3003',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3003',
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true
   },
   transports: ['websocket'],

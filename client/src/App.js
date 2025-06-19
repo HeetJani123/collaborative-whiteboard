@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 
-// Create socket connection with explicit configuration
-const socket = io('http://localhost:3004', {
+// Create socket connection with dynamic server URL
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || 'http://localhost:3004';
+const socket = io(SERVER_URL, {
   transports: ['websocket'],
   reconnection: true,
   reconnectionAttempts: 5,

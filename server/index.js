@@ -9,7 +9,7 @@ const app = express();
 // Dynamic CORS origin for production
 const allowedOrigins = [
   'http://localhost:3003',
-  'https://your-netlify-app.netlify.app', // Replace with your actual Netlify URL
+  'https://curious-macaron-c3adb0.netlify.app', // Replace with your actual Netlify URL
   process.env.CLIENT_URL // Environment variable for production
 ].filter(Boolean);
 

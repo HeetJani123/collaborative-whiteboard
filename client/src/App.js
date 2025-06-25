@@ -58,11 +58,6 @@ function App() {
       
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      //ctx.strokeStyle = color;
-      //ctx.lineWidth = size;
-      setColor(ctx.strokeStyle)
-      setSize(ctx.lineWidth)
-      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
@@ -71,7 +66,7 @@ function App() {
     window.addEventListener('resize', resizeCanvas);
 
     return () => window.removeEventListener('resize', resizeCanvas);
-  }, [color, size]);
+  }, []);
 
   // Socket connection and event handling
   useEffect(() => {

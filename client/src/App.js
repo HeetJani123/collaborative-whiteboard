@@ -12,7 +12,11 @@ const socket = io(SERVER_URL, {
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
   timeout: 20000,
-  autoConnect: true
+  autoConnect: true,
+  cors: {
+    origin: ["https://your-netlify-site.netlify.app"],
+    methods: ["GET", "POST"]
+  }
 });
 
 // Predefined colors for the palette

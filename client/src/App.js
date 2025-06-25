@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 // Create socket connection with dynamic server URL
 const SERVER_URL =
   process.env.NODE_ENV === "production"
-    ? "https://your-backend.onrender.com"
+    ? "https://collaborative-whiteboard-2.onrender.com"
     : "http://localhost:3004";
 const socket = io(SERVER_URL, {
   transports: ['websocket'],

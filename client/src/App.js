@@ -4,8 +4,8 @@ import io from 'socket.io-client';
 // Create socket connection with dynamic server URL
 const SERVER_URL =
   process.env.NODE_ENV === "production"
-    ? "https://collaborative-whiteboard-2.onrender.com/" // <-- Replace with your deployed backend URL (Render/Heroku/etc)
-    : "http://localhost:3004"; // <-- Your local backend port
+    ? "https://your-backend.onrender.com"
+    : "http://localhost:3004";
 const socket = io(SERVER_URL, {
   transports: ['websocket'],
   reconnection: true,
